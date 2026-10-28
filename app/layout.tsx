@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import AppShell from "@/components/AppShell";
+import { EvaluationsProvider } from "@/lib/evaluations";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -9,7 +11,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-bg font-sans antialiased">{children}</body>
+      <body className="min-h-screen bg-bg font-sans antialiased">
+        <EvaluationsProvider>
+          <AppShell>{children}</AppShell>
+        </EvaluationsProvider>
+      </body>
     </html>
   );
 }

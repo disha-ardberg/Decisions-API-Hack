@@ -2,5 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body { background: #0a0b10; color: #e6e8ef; }
-mark.trigger { background: rgba(124,108,255,.35); color: #fff; border-radius: 3px; padding: 0 2px; }
+body {
+  background: radial-gradient(1200px 500px at 20% -10%, rgba(109,106,245,.12), transparent 60%), #080a12;
+  color: #e7e9f3;
+}
+mark.trigger { background: rgba(109,106,245,.35); color: #fff; border-radius: 3px; padding: 0 2px; }
+:focus-visible { outline: 2px solid #6d6af5; outline-offset: 2px; }
