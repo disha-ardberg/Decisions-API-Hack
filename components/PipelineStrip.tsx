@@ -1,27 +1,25 @@
-const STAGES = ["Input", "10 Personas", "Aggregate", "Rewrite", "Re-vote"];
+const STAGES = ["Input", "Customer Simulation", "Insights", "Rewrite", "Re-evaluation"];
 
 export default function PipelineStrip({ active, completed }: { active: number | null; completed: number }) {
   return (
-    <ol className="flex flex-wrap items-center gap-x-2 gap-y-2 text-xs sm:text-sm" aria-label="Pipeline">
+    <ol className="flex items-center overflow-x-auto rounded-2xl border border-line bg-card px-4 py-3 text-sm" aria-label="Pipeline">
       {STAGES.map((label, i) => {
         const done = i < completed && active !== i;
         const running = active === i;
+        const current = running || (!done && i === completed);
         return (
-          <li key={label} className="flex items-center gap-2">
+          <li key={label} className="flex flex-1 items-center gap-2 whitespace-nowrap last:flex-none">
             <span
               className={[
-                "rounded-full border px-3 py-1 transition-colors",
-                running
-                  ? "animate-pulse border-accent bg-accent/20 text-white shadow-[0_0_14px_rgba(124,108,255,.45)]"
-                  : done
-                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300"
-                    : "border-line text-zinc-500",
+                "flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold",
+                done ? "bg-emerald-500 text-white" : running ? "animate-pulse bg-accent text-white" : "bg-zinc-700/70 text-zinc-300",
               ].join(" ")}
             >
-              {done ? "✓ " : ""}
-              {label}
+              {done ? "✓" : i + 1}
             </span>
-            {i < STAGES.length - 1 && <span className="text-zinc-600">→</span>}
+            <span className={done || current ? "text-zinc-100" : "text-zinc-500"} style={current && !done ? { color: "#a5a3ff" } : undefined}>{label}</span>
+            {i < STAGES.length - 1 && <span className={`mx-2 hidden h-px flex-1 min-[700px]:block ${done ? "bg-emerald-500/50" : "bg-line"}`} />}
+            {i < STAGES.length - 1 && <span className="mx-2 text-zinc-600 min-[700px]:hidden">›</span>}
           </li>
         );
       })}

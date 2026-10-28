@@ -1,9 +1,8 @@
 "use client";
 
 import { animate } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { Aggregate } from "@/lib/aggregate";
-import { SIMULATED_LABEL } from "@/lib/prompts";
 
 function useCountUp(target: number | null): number {
   const [value, setValue] = useState(0);
@@ -23,55 +22,63 @@ function useCountUp(target: number | null): number {
   return target === null ? 0 : value;
 }
 
-type Props = { title: string; agg: Aggregate; compareTo?: number | null };
-
-export default function ScoreGauge({ title, agg, compareTo }: Props) {
-  const shown = useCountUp(agg.score);
-  const { split, model_disagreement: md } = agg;
-  const delta = compareTo != null && agg.score != null ? agg.score - compareTo : null;
-  const R = 54;
-  const C = 2 * Math.PI * R;
-
+export function Ring({ value, size = 140, stroke = 12, small = false, sub }: { value: number | null; size?: number; stroke?: number; small?: boolean; sub?: string }) {
+  const shown = useCountUp(value);
+  const id = useId();
+  const r = (size - stroke) / 2;
+  const C = 2 * Math.PI * r;
   return (
-    <div className="rounded-2xl border border-line bg-card p-5">
-      <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-400">{title}</div>
-      <div className="flex items-center gap-5">
-        <div className="relative h-32 w-32 shrink-0">
-          <svg viewBox="0 0 128 128" className="h-full w-full -rotate-90">
-            <circle cx="64" cy="64" r={R} fill="none" stroke="#232634" strokeWidth="10" />
-            <circle
-              cx="64" cy="64" r={R} fill="none" stroke="#7c6cff" strokeWidth="10" strokeLinecap="round"
-              strokeDasharray={C} strokeDashoffset={C * (1 - shown / 100)}
-              style={{ filter: "drop-shadow(0 0 6px rgba(124,108,255,.6))" }}
-            />
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-bold tabular-nums">{agg.score === null ? "—" : `${shown}%`}</span>
-            {delta !== null && (
-              <span className={`text-xs font-semibold ${delta > 0 ? "text-emerald-400" : delta < 0 ? "text-red-400" : "text-zinc-400"}`}>
-                {delta > 0 ? "+" : ""}{delta} pts
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="space-y-2 text-sm">
-          <div className="flex gap-2">
-            <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 text-emerald-300">Buy {split.buy}</span>
-            <span className="rounded-md bg-amber-500/15 px-2 py-0.5 text-amber-300">Maybe {split.maybe}</span>
-            <span className="rounded-md bg-red-500/15 px-2 py-0.5 text-red-300">Pass {split.pass}</span>
-          </div>
-          <div className="text-xs text-zinc-400">
-            {agg.successful} of {agg.expected} personas evaluated
-            {agg.successful < agg.expected && agg.successful > 0 && " — failed personas are excluded, not scored as 0"}
-          </div>
-          {md.contested && (
-            <div className="rounded-md border border-amber-500/40 bg-amber-500/10 px-2 py-1 text-xs text-amber-300">
-              Contested: models disagree by {Math.round(md.spread * 100)} pts
-            </div>
-          )}
-        </div>
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg viewBox={`0 0 ${size} ${size}`} className="h-full w-full -rotate-90">
+        <defs>
+          <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#6d6af5" />
+            <stop offset="100%" stopColor="#34d399" />
+          </linearGradient>
+        </defs>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#1e2236" strokeWidth={stroke} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={`url(#${id})`} strokeWidth={stroke} strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - shown / 100)} />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className={`font-bold tabular-nums ${small ? "text-base" : "text-3xl"}`}>{value === null ? "—" : `${shown}%`}</span>
+        {sub && <span className="text-[11px] text-zinc-400">{sub}</span>}
       </div>
-      <p className="mt-3 text-xs text-zinc-500">{SIMULATED_LABEL}</p>
     </div>
+  );
+}
+
+export function SplitRows({ split }: { split: Aggregate["split"] }) {
+  const rows = [
+    ["Buy", split.buy, "bg-emerald-400"],
+    ["Maybe", split.maybe, "bg-amber-400"],
+    ["Pass", split.pass, "bg-red-400"],
+  ] as const;
+  return (
+    <div className="flex-1 space-y-2">
+      {rows.map(([label, n, dot]) => (
+        <div key={label} className="flex items-center justify-between rounded-lg border border-line bg-bg/50 px-3 py-1.5 text-sm">
+          <span className="flex items-center gap-2"><span className={`h-2.5 w-2.5 rounded-full ${dot}`} />{label}</span>
+          <span className="font-semibold tabular-nums">{n}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function ScoreGauge({ agg }: { agg: Aggregate }) {
+  const md = agg.model_disagreement;
+  return (
+    <section className="rounded-2xl border border-line bg-card p-5">
+      <h2 className="mb-4 font-semibold">Simulated Conversion Score</h2>
+      <div className="flex items-center gap-5">
+        <Ring value={agg.score} sub={`${agg.successful}/${agg.expected} successful`} />
+        <SplitRows split={agg.split} />
+      </div>
+      <div className={`mt-4 flex items-center justify-between rounded-lg border px-3 py-2 text-sm ${md.contested ? "border-amber-500/40 bg-amber-500/10 text-amber-200" : "border-line bg-bg/50 text-zinc-300"}`}>
+        <span>Model disagreement{md.contested ? " · contested" : ""}</span>
+        <span className="font-semibold tabular-nums">{agg.successful > 0 ? `${Math.round(md.spread * 100)}%` : "—"}</span>
+      </div>
+      <p className="mt-3 text-xs text-zinc-500">Simulated conversion based on synthetic personas. Not a real-world conversion prediction.</p>
+    </section>
   );
 }

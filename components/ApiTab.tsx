@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { validateCopy } from "@/lib/schemas";
+import { SAMPLES } from "@/lib/samples";
+import { COPY_MAX, validateCopy } from "@/lib/schemas";
 
-export default function ApiTab({ copy }: { copy: string }) {
+export default function ApiTab({ initialCopy }: { initialCopy?: string }) {
+  const [copy, setCopy] = useState(initialCopy ?? SAMPLES[0].copy);
   const [origin, setOrigin] = useState("http://localhost:3000");
   const [withRewrite, setWithRewrite] = useState(false);
   const [raw, setRaw] = useState<string | null>(null);
@@ -55,6 +57,10 @@ export default function ApiTab({ copy }: { copy: string }) {
       <div>
         <h3 className="font-semibold"><code className="rounded bg-bg px-2 py-0.5 text-accent">POST /api/decide</code></h3>
         <p className="mt-1 text-sm text-zinc-400">Runs the full panel server-side (concurrency 5) and returns score, split, votes, objections, and optionally the rewrite and re-vote.</p>
+      </div>
+      <div>
+        <div className="mb-1 flex justify-between text-xs uppercase tracking-wide text-zinc-500"><span>Copy to send</span><span>{copy.trim().length}/{COPY_MAX}</span></div>
+        <textarea value={copy} onChange={(e) => setCopy(e.target.value)} rows={4} className="w-full resize-y rounded-xl border border-line bg-bg p-3 text-sm text-zinc-200 outline-none focus:border-accent" aria-label="Copy to send to the API" />
       </div>
       <div><div className="mb-1 text-xs uppercase tracking-wide text-zinc-500">Request</div><pre className={pre}>{body}</pre></div>
       <div><div className="mb-1 text-xs uppercase tracking-wide text-zinc-500">curl</div><pre className={pre}>{curl}</pre></div>

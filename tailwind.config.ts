@@ -5,10 +5,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#0a0b10",
-        card: "#12141c",
-        line: "#232634",
-        accent: "#7c6cff",
+        bg: "#080a12",
+        card: "#0e1120",
+        card2: "#121528",
+        line: "#1e2236",
+        accent: "#6d6af5",
+      },
+      fontFamily: {
+        sans: ["Inter", "ui-sans-serif", "system-ui", "Segoe UI", "Roboto", "sans-serif"],
       },
     },
   },
