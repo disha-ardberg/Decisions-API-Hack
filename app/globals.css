@@ -1,0 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { background: #0a0b10; color: #e6e8ef; }
+mark.trigger { background: rgba(124,108,255,.35); color: #fff; border-radius: 3px; padding: 0 2px; }

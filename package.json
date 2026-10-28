@@ -1,0 +1,32 @@
+{
+  "name": "panel",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx scripts/test-aggregate.ts"
+  },
+  "dependencies": {
+    "diff": "^9.0.0",
+    "framer-motion": "^14.7.1",
+    "next": "^14.2.35",
+    "openai": "^7.45.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/diff": "^7.0.2",
+    "@types/node": "^20.19.43",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "autoprefixer": "^10.6.2",
+    "postcss": "^8.5.32",
+    "tailwindcss": "^3.4.19",
+    "tsx": "^4.23.15",
+    "typescript": "5.6"
+  }
+}
