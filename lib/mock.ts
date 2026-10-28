@@ -227,7 +227,11 @@ export async function mockVote(copy: string, persona: Persona, isRetry = false):
     };
   }
 
-  const profile = PROFILES[persona.id];
+  const profile = PROFILES[persona.id] ?? {
+    voice: "From my perspective,",
+    lean: 0,
+    priority: ["price", "evidence", "vague", "risk", "privacy", "audience"] as Category[],
+  };
   const seed = hash(persona.id + copy);
   const noise = (seed - 0.5) * 0.12;
   // Mid-quality copy makes the three "models" read it differently, to exercise model disagreement.

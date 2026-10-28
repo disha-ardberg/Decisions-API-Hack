@@ -25,7 +25,7 @@ function parseVote(raw: string, copy: string): PersonaVote {
 export async function evaluatePersona(
   copy: string,
   personaOrId: Persona | string,
-  opts: { isRetry?: boolean } = {},
+  opts: { isRetry?: boolean; audience?: string } = {},
 ): Promise<VoteResult> {
   const persona = typeof personaOrId === "string" ? getPersona(personaOrId) : personaOrId;
   if (!persona) {
@@ -45,7 +45,7 @@ export async function evaluatePersona(
   let lastMessage = "";
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const raw = await chatJson(model, personaSystemPrompt(persona), personaUserPrompt(copy));
+      const raw = await chatJson(model, personaSystemPrompt(persona), personaUserPrompt(copy, opts.audience));
       const vote = parseVote(raw, copy);
       return { ...vote, personaId: persona.id, model, latencyMs: Date.now() - started };
     } catch (err) {

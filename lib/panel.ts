@@ -1,13 +1,13 @@
 import { aggregate } from "./aggregate";
-import { PERSONAS } from "./personas";
+import { PERSONAS, type Persona } from "./personas";
 import { runWithConcurrency } from "./pool";
 import type { VoteResult } from "./schemas";
 import { evaluatePersona } from "./vote";
 
-/** Server-side: evaluate all personas with concurrency 5. Used by /api/decide. */
-export async function runPanel(copy: string): Promise<VoteResult[]> {
+/** Server-side: evaluate the supplied personas with concurrency 5. */
+export async function runPanel(copy: string, personas: Persona[] = PERSONAS, audience?: string): Promise<VoteResult[]> {
   const settled = await runWithConcurrency(
-    PERSONAS.map((p) => () => evaluatePersona(copy, p, { isRetry: true })),
+    personas.map((p) => () => evaluatePersona(copy, p, { isRetry: true, audience })),
     5,
   );
   return settled.map((r, i) =>
@@ -15,7 +15,7 @@ export async function runPanel(copy: string): Promise<VoteResult[]> {
       ? r.value
       : {
           error: true as const,
-          personaId: PERSONAS[i].id,
+          personaId: personas[i].id,
           model: "",
           latencyMs: 0,
           message: r.reason instanceof Error ? r.reason.message : "Evaluation failed.",
@@ -23,8 +23,8 @@ export async function runPanel(copy: string): Promise<VoteResult[]> {
   );
 }
 
-export function summarize(votes: VoteResult[]) {
-  const a = aggregate(votes);
+export function summarize(votes: VoteResult[], expected = votes.length) {
+  const a = aggregate(votes, expected);
   return {
     score: a.score,
     split: a.split,

@@ -40,8 +40,8 @@ Return only valid JSON matching this schema, with no Markdown and no extra text:
 ${VOTE_SCHEMA_TEXT}`;
 }
 
-export function personaUserPrompt(copy: string): string {
-  return `Here is the marketing copy to evaluate:\n\n"""\n${copy}\n"""\n\nGive your decision as JSON.`;
+export function personaUserPrompt(copy: string, audience?: string): string {
+  return `Here is the marketing copy to evaluate:\n\n"""\n${copy}\n"""\n\n${audience ? `Intended audience: ${audience}\n\n` : ""}Give your decision as JSON.`;
 }
 
 export function rewriteSystemPrompt(): string {
