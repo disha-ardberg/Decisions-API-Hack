@@ -23,9 +23,10 @@ type Props = {
   copy: string;
   onClose: () => void;
   onRetry: (id: string) => void;
+  allowRetry?: boolean;
 };
 
-export default function PersonaDetailPanel({ personaId, state, copy, onClose, onRetry }: Props) {
+export default function PersonaDetailPanel({ personaId, state, copy, onClose, onRetry, allowRetry = true }: Props) {
   const persona = personaId ? getPersona(personaId) : undefined;
   const vote = state?.vote;
 
@@ -73,7 +74,7 @@ export default function PersonaDetailPanel({ personaId, state, copy, onClose, on
                 <p className="font-semibold text-zinc-200">Evaluation failed</p>
                 <p className="mt-1 text-zinc-400">{vote.message}</p>
                 <p className="mt-1 text-xs text-zinc-500">This persona is excluded from the score; it is not counted as a decision.</p>
-                <button onClick={() => onRetry(persona.id)} className="mt-3 rounded-lg bg-accent px-3 py-1.5 text-sm font-semibold text-white hover:brightness-110">Retry</button>
+                {allowRetry && <button onClick={() => onRetry(persona.id)} className="mt-3 rounded-lg bg-accent px-3 py-1.5 text-sm font-semibold text-white hover:brightness-110">Retry</button>}
               </div>
             )}
 

@@ -1,0 +1,364 @@
+{
+    "schema_version":  1,
+    "source":  "mock",
+    "recorded_at":  "2026-10-28T10:00:15.2737603Z",
+    "original":  {
+                     "copy":  "PantryPilot helps you plan dinners around what you already have. Download the app and see what is possible. Premium features available.",
+                     "votes":  [
+                                   {
+                                       "decision":  "pass",
+                                       "purchase_likelihood":  0.07,
+                                       "top_objection":  "No proof the claims are safe or tested",
+                                       "trigger_phrase":  "Premium features available",
+                                       "what_would_convince_me":  "Independent proof or concrete specifics backing the claims",
+                                       "reasoning":  "As a parent, the copy doesn\u0027t earn my money: no proof the claims are safe or tested. As written I\u0027d skip it.",
+                                       "personaId":  "skeptical-parent",
+                                       "model":  "mock-A",
+                                       "latencyMs":  384
+                                   },
+                                   {
+                                       "decision":  "pass",
+                                       "purchase_likelihood":  0.28,
+                                       "top_objection":  "No price or cost given, so I can\u0027t tell if there\u0027s a free tier",
+                                       "trigger_phrase":  "Premium features available",
+                                       "what_would_convince_me":  "A clear price and exactly what is included",
+                                       "reasoning":  "On my budget, the copy doesn\u0027t earn my money: no price or cost given, so I can\u0027t tell if there\u0027s a free tier. As written I\u0027d skip it.",
+                                       "personaId":  "broke-college-student",
+                                       "model":  "mock-B",
+                                       "latencyMs":  486
+                                   },
+                                   {
+                                       "decision":  "maybe",
+                                       "purchase_likelihood":  0.43,
+                                       "top_objection":  "Unclear who this is for and what it does",
+                                       "trigger_phrase":  "Premium features available",
+                                       "what_would_convince_me":  "A clear description of who it is for and how it works",
+                                       "reasoning":  "Skimming this, it sounds useful, but unclear who this is for and what it does. I\u0027d want that sorted before paying.",
+                                       "personaId":  "busy-executive",
+                                       "model":  "mock-C",
+                                       "latencyMs":  896
+                                   },
+                                   {
+                                       "decision":  "maybe",
+                                       "purchase_likelihood":  0.3,
+                                       "top_objection":  "No clear price or cost information",
+                                       "trigger_phrase":  "Download the app and see what is possible. Premium features available",
+                                       "what_would_convince_me":  "A clear price and exactly what is included",
+                                       "reasoning":  "In plain terms, it sounds useful, but no clear price or cost information. I\u0027d want that sorted before paying.",
+                                       "personaId":  "retired-teacher",
+                                       "model":  "mock-A",
+                                       "latencyMs":  829
+                                   },
+                                   {
+                                       "decision":  "maybe",
+                                       "purchase_likelihood":  0.36,
+                                       "top_objection":  "No evidence for the claims about real impact",
+                                       "trigger_phrase":  "PantryPilot helps you plan dinners around what you already have",
+                                       "what_would_convince_me":  "Independent proof or concrete specifics backing the claims",
+                                       "reasoning":  "Looking at the impact, it sounds useful, but no evidence for the claims about real impact. I\u0027d want that sorted before paying.",
+                                       "personaId":  "eco-millennial",
+                                       "model":  "mock-B",
+                                       "latencyMs":  344
+                                   },
+                                   {
+                                       "decision":  "pass",
+                                       "purchase_likelihood":  0.27,
+                                       "top_objection":  "No evidence or detail backing the claims",
+                                       "trigger_phrase":  "PantryPilot helps you plan dinners around what you already have",
+                                       "what_would_convince_me":  "Independent proof or concrete specifics backing the claims",
+                                       "reasoning":  "Technically speaking, the copy doesn\u0027t earn my money: no evidence or detail backing the claims. As written I\u0027d skip it.",
+                                       "personaId":  "tech-early-adopter",
+                                       "model":  "mock-C",
+                                       "latencyMs":  738
+                                   },
+                                   {
+                                       "decision":  "maybe",
+                                       "purchase_likelihood":  0.34,
+                                       "top_objection":  "No price or cost, so I can\u0027t judge the payback",
+                                       "trigger_phrase":  "Download the app and see what is possible. Premium features available",
+                                       "what_would_convince_me":  "A clear price and exactly what is included",
+                                       "reasoning":  "For my shop, it sounds useful, but no price or cost, so I can\u0027t judge the payback. I\u0027d want that sorted before paying.",
+                                       "personaId":  "small-business-owner",
+                                       "model":  "mock-A",
+                                       "latencyMs":  602
+                                   },
+                                   {
+                                       "decision":  "maybe",
+                                       "purchase_likelihood":  0.3,
+                                       "top_objection":  "No refund, trial or cancel-anytime reassurance",
+                                       "trigger_phrase":  "Download the app and see what is possible. Premium features available",
+                                       "what_would_convince_me":  "A free trial or refund policy I can use risk-free",
+                                       "reasoning":  "Honestly I\u0027m nervous, it sounds useful, but no refund, trial or cancel-anytime reassurance. I\u0027d want that sorted before paying.",
+                                       "personaId":  "anxious-first-time-buyer",
+                                       "model":  "mock-B",
+                                       "latencyMs":  233
+                                   },
+                                   {
+                                       "decision":  "pass",
+                                       "purchase_likelihood":  0.08,
+                                       "top_objection":  "Price and cost aren\u0027t stated or justified against alternatives",
+                                       "trigger_phrase":  "Premium features available",
+                                       "what_would_convince_me":  "A clear price and exactly what is included",
+                                       "reasoning":  "Price-wise, the copy doesn\u0027t earn my money: price and cost aren\u0027t stated or justified against alternatives. As written I\u0027d skip it.",
+                                       "personaId":  "bargain-hunter",
+                                       "model":  "mock-C",
+                                       "latencyMs":  385
+                                   },
+                                   {
+                                       "decision":  "pass",
+                                       "purchase_likelihood":  0,
+                                       "top_objection":  "No independent evidence or proof for the claims",
+                                       "trigger_phrase":  "PantryPilot helps you plan dinners around what you already have",
+                                       "what_would_convince_me":  "Independent proof or concrete specifics backing the claims",
+                                       "reasoning":  "Reading this skeptically, the copy doesn\u0027t earn my money: no independent evidence or proof for the claims. As written I\u0027d skip it.",
+                                       "personaId":  "cynical-journalist",
+                                       "model":  "mock-A",
+                                       "latencyMs":  324
+                                   }
+                               ],
+                     "score":  24,
+                     "split":  {
+                                   "buy":  0,
+                                   "maybe":  5,
+                                   "pass":  5
+                               },
+                     "top_objections":  [
+                                            {
+                                                "objection":  "No price or cost given, so I can\u0027t tell if there\u0027s a free tier",
+                                                "count":  3,
+                                                "personaIds":  [
+                                                                   "broke-college-student",
+                                                                   "retired-teacher",
+                                                                   "small-business-owner"
+                                                               ]
+                                            },
+                                            {
+                                                "objection":  "No proof the claims are safe or tested",
+                                                "count":  2,
+                                                "personaIds":  [
+                                                                   "skeptical-parent",
+                                                                   "cynical-journalist"
+                                                               ]
+                                            },
+                                            {
+                                                "objection":  "No evidence for the claims about real impact",
+                                                "count":  2,
+                                                "personaIds":  [
+                                                                   "eco-millennial",
+                                                                   "tech-early-adopter"
+                                                               ]
+                                            }
+                                        ],
+                     "verdict":  "revise",
+                     "rules":  [
+                                   {
+                                       "id":  "min_score",
+                                       "label":  "Score is at least the minimum",
+                                       "passed":  false,
+                                       "actual":  24,
+                                       "threshold":  55
+                                   },
+                                   {
+                                       "id":  "max_objection_share",
+                                       "label":  "Top objection share is at most the maximum",
+                                       "passed":  true,
+                                       "actual":  0.3,
+                                       "threshold":  0.4
+                                   },
+                                   {
+                                       "id":  "min_responded_share",
+                                       "label":  "Responded share is at least the minimum",
+                                       "passed":  true,
+                                       "actual":  1,
+                                       "threshold":  0.6
+                                   }
+                               ],
+                     "flip_hint":  "Raise score by 31 points",
+                     "responded":  "10 of 10"
+                 },
+    "rewrite":  {
+                    "revised_copy":  "PantryPilot helps you plan dinners around what you already have. Download the app and see what is possible. Pricing is shown up front: one monthly price, no hidden fees, and free to start. Every claim is backed by specifics you can check, with sample plans and independent review.",
+                    "changes_made":  [
+                                         {
+                                             "before":  "Premium features available.",
+                                             "after":  "Pricing is shown up front: one monthly price, no hidden fees, and free to start.",
+                                             "objection_addressed":  "No price or cost given, so I can\u0027t tell if there\u0027s a free tier"
+                                         }
+                                     ]
+                },
+    "revised":  {
+                    "copy":  "PantryPilot helps you plan dinners around what you already have. Download the app and see what is possible. Pricing is shown up front: one monthly price, no hidden fees, and free to start. Every claim is backed by specifics you can check, with sample plans and independent review.",
+                    "votes":  [
+                                  {
+                                      "decision":  "maybe",
+                                      "purchase_likelihood":  0.46,
+                                      "top_objection":  "No proof the claims are safe or tested",
+                                      "trigger_phrase":  "Download the app and see what is possible. Pricing is shown up front",
+                                      "what_would_convince_me":  "Independent proof or concrete specifics backing the claims",
+                                      "reasoning":  "As a parent, it sounds useful, but no proof the claims are safe or tested. I\u0027d want that sorted before paying.",
+                                      "personaId":  "skeptical-parent",
+                                      "model":  "mock-A",
+                                      "latencyMs":  795
+                                  },
+                                  {
+                                      "decision":  "buy",
+                                      "purchase_likelihood":  0.61,
+                                      "top_objection":  "No refund, trial or cancellation terms",
+                                      "trigger_phrase":  "free to start. Every claim is backed by specifics you can check, with",
+                                      "what_would_convince_me":  "A free trial or refund policy I can use risk-free",
+                                      "reasoning":  "On my budget, this fits my situation and the terms feel low-risk. I\u0027d give it a try.",
+                                      "personaId":  "broke-college-student",
+                                      "model":  "mock-B",
+                                      "latencyMs":  394
+                                  },
+                                  {
+                                      "decision":  "buy",
+                                      "purchase_likelihood":  0.64,
+                                      "top_objection":  "Unclear who this is for and what it does",
+                                      "trigger_phrase":  "free to start. Every claim is backed by specifics you can check, with",
+                                      "what_would_convince_me":  "A clear description of who it is for and how it works",
+                                      "reasoning":  "Skimming this, this fits my situation and the terms feel low-risk. I\u0027d give it a try.",
+                                      "personaId":  "busy-executive",
+                                      "model":  "mock-C",
+                                      "latencyMs":  866
+                                  },
+                                  {
+                                      "decision":  "maybe",
+                                      "purchase_likelihood":  0.54,
+                                      "top_objection":  "No refund, trial or cancellation terms",
+                                      "trigger_phrase":  "Pricing is shown up front: one monthly price, no hidden fees, and",
+                                      "what_would_convince_me":  "A free trial or refund policy I can use risk-free",
+                                      "reasoning":  "In plain terms, it sounds useful, but no refund, trial or cancellation terms. I\u0027d want that sorted before paying.",
+                                      "personaId":  "retired-teacher",
+                                      "model":  "mock-A",
+                                      "latencyMs":  651
+                                  },
+                                  {
+                                      "decision":  "buy",
+                                      "purchase_likelihood":  0.78,
+                                      "top_objection":  "No evidence for the claims about real impact",
+                                      "trigger_phrase":  "free to start. Every claim is backed by specifics you can check, with",
+                                      "what_would_convince_me":  "Independent proof or concrete specifics backing the claims",
+                                      "reasoning":  "Looking at the impact, this fits my situation and the terms feel low-risk. I\u0027d give it a try.",
+                                      "personaId":  "eco-millennial",
+                                      "model":  "mock-B",
+                                      "latencyMs":  529
+                                  },
+                                  {
+                                      "decision":  "maybe",
+                                      "purchase_likelihood":  0.58,
+                                      "top_objection":  "No evidence or detail backing the claims",
+                                      "trigger_phrase":  "Every claim is backed by specifics you can check, with sample plans",
+                                      "what_would_convince_me":  "Independent proof or concrete specifics backing the claims",
+                                      "reasoning":  "Technically speaking, it sounds useful, but no evidence or detail backing the claims. I\u0027d want that sorted before paying.",
+                                      "personaId":  "tech-early-adopter",
+                                      "model":  "mock-C",
+                                      "latencyMs":  755
+                                  },
+                                  {
+                                      "decision":  "maybe",
+                                      "purchase_likelihood":  0.57,
+                                      "top_objection":  "Unclear if this works for a small business like mine",
+                                      "trigger_phrase":  "Download the app and see what is possible. Pricing is shown up front",
+                                      "what_would_convince_me":  "A clear description of who it is for and how it works",
+                                      "reasoning":  "For my shop, it sounds useful, but unclear if this works for a small business like mine. I\u0027d want that sorted before paying.",
+                                      "personaId":  "small-business-owner",
+                                      "model":  "mock-A",
+                                      "latencyMs":  467
+                                  },
+                                  {
+                                      "decision":  "maybe",
+                                      "purchase_likelihood":  0.48,
+                                      "top_objection":  "No refund, trial or cancel-anytime reassurance",
+                                      "trigger_phrase":  "PantryPilot helps you plan dinners around what you already have",
+                                      "what_would_convince_me":  "A free trial or refund policy I can use risk-free",
+                                      "reasoning":  "Honestly I\u0027m nervous, it sounds useful, but no refund, trial or cancel-anytime reassurance. I\u0027d want that sorted before paying.",
+                                      "personaId":  "anxious-first-time-buyer",
+                                      "model":  "mock-B",
+                                      "latencyMs":  248
+                                  },
+                                  {
+                                      "decision":  "maybe",
+                                      "purchase_likelihood":  0.47,
+                                      "top_objection":  "No refund, trial or cancellation terms",
+                                      "trigger_phrase":  "Pricing is shown up front: one monthly price, no hidden fees, and",
+                                      "what_would_convince_me":  "A free trial or refund policy I can use risk-free",
+                                      "reasoning":  "Price-wise, it sounds useful, but no refund, trial or cancellation terms. I\u0027d want that sorted before paying.",
+                                      "personaId":  "bargain-hunter",
+                                      "model":  "mock-C",
+                                      "latencyMs":  732
+                                  },
+                                  {
+                                      "decision":  "maybe",
+                                      "purchase_likelihood":  0.42,
+                                      "top_objection":  "No independent evidence or proof for the claims",
+                                      "trigger_phrase":  "Download the app and see what is possible. Pricing is shown up front",
+                                      "what_would_convince_me":  "Independent proof or concrete specifics backing the claims",
+                                      "reasoning":  "Reading this skeptically, it sounds useful, but no independent evidence or proof for the claims. I\u0027d want that sorted before paying.",
+                                      "personaId":  "cynical-journalist",
+                                      "model":  "mock-A",
+                                      "latencyMs":  528
+                                  }
+                              ],
+                    "score":  55,
+                    "split":  {
+                                  "buy":  3,
+                                  "maybe":  7,
+                                  "pass":  0
+                              },
+                    "top_objections":  [
+                                           {
+                                               "objection":  "No refund, trial or cancellation terms",
+                                               "count":  4,
+                                               "personaIds":  [
+                                                                  "broke-college-student",
+                                                                  "retired-teacher",
+                                                                  "anxious-first-time-buyer",
+                                                                  "bargain-hunter"
+                                                              ]
+                                           },
+                                           {
+                                               "objection":  "No proof the claims are safe or tested",
+                                               "count":  2,
+                                               "personaIds":  [
+                                                                  "skeptical-parent",
+                                                                  "cynical-journalist"
+                                                              ]
+                                           },
+                                           {
+                                               "objection":  "Unclear who this is for and what it does",
+                                               "count":  2,
+                                               "personaIds":  [
+                                                                  "busy-executive",
+                                                                  "small-business-owner"
+                                                              ]
+                                           }
+                                       ],
+                    "verdict":  "ship",
+                    "rules":  [
+                                  {
+                                      "id":  "min_score",
+                                      "label":  "Score is at least the minimum",
+                                      "passed":  true,
+                                      "actual":  55,
+                                      "threshold":  55
+                                  },
+                                  {
+                                      "id":  "max_objection_share",
+                                      "label":  "Top objection share is at most the maximum",
+                                      "passed":  true,
+                                      "actual":  0.4,
+                                      "threshold":  0.4
+                                  },
+                                  {
+                                      "id":  "min_responded_share",
+                                      "label":  "Responded share is at least the minimum",
+                                      "passed":  true,
+                                      "actual":  1,
+                                      "threshold":  0.6
+                                  }
+                              ],
+                    "flip_hint":  "",
+                    "responded":  "10 of 10"
+                }
+}

@@ -4,6 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { aggregate, type Aggregate } from "./aggregate";
 import { PERSONAS } from "./personas";
 import { runWithConcurrency } from "./pool";
+import { RecordedRunSchema } from "./recorded";
 import { validateCopy, type Rewrite, type VoteResult } from "./schemas";
 
 export type NodeState = { status: "idle" | "loading" | "done" | "error"; vote?: VoteResult };
@@ -11,6 +12,13 @@ export type Round = Record<string, NodeState>;
 export type RoundKey = "original" | "revised";
 
 const emptyRound = (): Round => Object.fromEntries(PERSONAS.map((p) => [p.id, { status: "idle" } as NodeState]));
+const roundFromVotes = (votes: VoteResult[]): Round => {
+  const round = emptyRound();
+  for (const vote of votes) {
+    if (vote.personaId in round) round[vote.personaId] = { status: vote.error ? "error" : "done", vote };
+  }
+  return round;
+};
 
 async function fetchVote(copy: string, personaId: string, retry = false): Promise<VoteResult> {
   const started = Date.now();
@@ -40,6 +48,7 @@ export function useFocusGroup() {
   const [completed, setCompleted] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [recordedRun, setRecordedRun] = useState<{ source: "mock" | "live"; recordedAt: string } | null>(null);
   const busyRef = useRef(false);
 
   const setters = { original: setOriginal, revised: setRevised };
@@ -69,6 +78,7 @@ export function useFocusGroup() {
       busyRef.current = true;
       setBusy(true);
       setError(null);
+      setRecordedRun(null);
       setRewrite(null);
       setRevisedCopy("");
       setRevised(emptyRound());
@@ -91,7 +101,7 @@ export function useFocusGroup() {
   const revisedAgg = useMemo(() => aggregate(Object.values(revised).flatMap((n) => (n.vote ? [n.vote] : []))), [revised]);
 
   const fixObjections = useCallback(async () => {
-    if (busyRef.current || originalAgg.top_objections.length === 0) return;
+    if (busyRef.current || recordedRun || originalAgg.top_objections.length === 0) return;
     busyRef.current = true;
     setBusy(true);
     setError(null);
@@ -122,10 +132,11 @@ export function useFocusGroup() {
       busyRef.current = false;
       setBusy(false);
     }
-  }, [originalAgg, originalCopy, runRound]);
+  }, [originalAgg, originalCopy, recordedRun, runRound]);
 
   const retryPersona = useCallback(
     async (key: RoundKey, personaId: string) => {
+      if (recordedRun) return;
       const set = setters[key];
       const copy = key === "original" ? originalCopy : revisedCopy;
       set((r) => ({ ...r, [personaId]: { status: "loading" } }));
@@ -133,12 +144,26 @@ export function useFocusGroup() {
       set((r) => ({ ...r, [personaId]: { status: vote.error ? "error" : "done", vote } }));
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [originalCopy, revisedCopy],
+    [originalCopy, revisedCopy, recordedRun],
   );
+
+  const loadRecordedRun = useCallback((input: unknown) => {
+    if (busyRef.current) return;
+    const run = RecordedRunSchema.parse(input);
+    setOriginalCopy(run.original.copy);
+    setOriginal(roundFromVotes(run.original.votes));
+    setRewrite(run.rewrite ?? null);
+    setRevisedCopy(run.revised?.copy ?? "");
+    setRevised(run.revised ? roundFromVotes(run.revised.votes) : emptyRound());
+    setRecordedRun({ source: run.source, recordedAt: run.recorded_at });
+    setError(null);
+    setActive(null);
+    setCompleted(run.revised ? 5 : 3);
+  }, []);
 
   return {
     originalCopy, revisedCopy, original, revised, rewrite, originalAgg, revisedAgg,
-    active, completed, error, busy, run, fixObjections, retryPersona,
+    active, completed, error, busy, recordedRun, run, fixObjections, retryPersona, loadRecordedRun,
   } as const;
 }
 

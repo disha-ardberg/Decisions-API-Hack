@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import sampleRun from "@/data/recorded/sample.json";
 import ApiTab from "@/components/ApiTab";
 import CopyInput from "@/components/CopyInput";
 import ObjectionList from "@/components/ObjectionList";
@@ -11,6 +12,7 @@ import RedlineView from "@/components/RedlineView";
 import ScoreGauge from "@/components/ScoreGauge";
 import VerdictCard from "@/components/VerdictCard";
 import { evaluate } from "@/lib/gate";
+import { makeRecordedRound, RecordedRunSchema } from "@/lib/recorded";
 import { useFocusGroup, type RoundKey } from "@/lib/useFocusGroup";
 
 export default function Home() {
@@ -19,14 +21,19 @@ export default function Home() {
   const [tab, setTab] = useState<"panel" | "api">("panel");
   const [view, setView] = useState<RoundKey>("original");
   const [selected, setSelected] = useState<string | null>(null);
+  const [recordedError, setRecordedError] = useState<string | null>(null);
 
   const hasResults = fg.completed >= 3;
   const hasRevised = fg.completed >= 4 && !!fg.rewrite;
   const shownKey: RoundKey = hasRevised ? view : "original";
   const round = shownKey === "original" ? fg.original : fg.revised;
   const roundCopy = shownKey === "original" ? fg.originalCopy : fg.revisedCopy;
-  const canFix = hasResults && !fg.busy && !hasRevised && fg.originalAgg.top_objections.length > 0;
+  const canFix = hasResults && !fg.busy && !fg.recordedRun && !hasRevised && fg.originalAgg.top_objections.length > 0;
   const revoteDone = fg.completed >= 5;
+  const nodesLoading = [...Object.values(fg.original), ...Object.values(fg.revised)].some((node) => node.status === "loading");
+  const canSaveRun = hasResults && !fg.recordedRun && !fg.busy && !nodesLoading &&
+    Object.values(fg.original).filter((node) => node.vote).length === 10 &&
+    (!revoteDone || Object.values(fg.revised).filter((node) => node.vote).length === 10);
   const originalVerdict = hasResults ? evaluate({
     score: fg.originalAgg.score,
     votes: Object.values(fg.original).flatMap((node) => node.vote ? [node.vote] : []),
@@ -38,12 +45,55 @@ export default function Home() {
     top_objections: fg.revisedAgg.top_objections,
   }) : null;
 
+  function loadRecorded() {
+    try {
+      const parsed = RecordedRunSchema.parse(sampleRun);
+      fg.loadRecordedRun(parsed);
+      setCopy(parsed.original.copy);
+      setView("original");
+      setSelected(null);
+      setRecordedError(null);
+    } catch {
+      setRecordedError("Recorded run failed validation.");
+    }
+  }
+
+  function saveRun() {
+    const originalVotes = Object.values(fg.original).flatMap((node) => node.vote ? [node.vote] : []);
+    const revisedVotes = Object.values(fg.revised).flatMap((node) => node.vote ? [node.vote] : []);
+    const run = RecordedRunSchema.parse({
+      schema_version: 1,
+      source: originalVotes.every((vote) => vote.model.startsWith("mock-")) ? "mock" : "live",
+      recorded_at: new Date().toISOString(),
+      original: makeRecordedRound(fg.originalCopy, originalVotes),
+      ...(revoteDone && fg.rewrite ? {
+        rewrite: fg.rewrite,
+        revised: makeRecordedRound(fg.revisedCopy, revisedVotes),
+      } : {}),
+    });
+    const url = URL.createObjectURL(new Blob([JSON.stringify(run, null, 2)], { type: "application/json" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "panel-run.json";
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
   return (
     <main className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-6">
       <header>
         <h1 className="text-3xl font-bold tracking-tight">Panel<span className="text-accent">.</span></h1>
         <p className="mt-1 text-zinc-400">Test your pitch on 10 synthetic customers before you spend a dollar.</p>
+        {fg.recordedRun && <span className="mt-2 inline-flex rounded-full border border-sky-500/50 bg-sky-500/10 px-3 py-1 text-xs font-semibold text-sky-300">Recorded run · {fg.recordedRun.source}</span>}
       </header>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <button type="button" onClick={loadRecorded} disabled={fg.busy || nodesLoading} className="rounded-lg border border-line px-3 py-1.5 text-sm text-zinc-200 hover:border-accent disabled:opacity-40">Load recorded run</button>
+        {process.env.NODE_ENV === "development" && hasResults && !fg.recordedRun && (
+          <button type="button" onClick={saveRun} disabled={!canSaveRun} className="rounded-lg border border-line px-3 py-1.5 text-sm text-zinc-200 hover:border-accent disabled:opacity-40">Save this run</button>
+        )}
+        {recordedError && <span role="alert" className="text-sm text-red-400">{recordedError}</span>}
+      </div>
 
       <PipelineStrip active={fg.active} completed={fg.completed} />
 
@@ -125,6 +175,7 @@ export default function Home() {
         copy={roundCopy}
         onClose={() => setSelected(null)}
         onRetry={(id) => fg.retryPersona(shownKey, id)}
+        allowRetry={!fg.recordedRun}
       />
     </main>
   );
