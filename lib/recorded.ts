@@ -8,6 +8,7 @@ const VoteOkSchema = PersonaVoteSchema.extend({
   model: z.string(),
   latencyMs: z.number().nonnegative(),
   error: z.literal(false).optional(),
+  rateLimited: z.boolean().optional(),
 });
 const VoteErrorSchema = z.object({
   error: z.literal(true),
@@ -15,6 +16,7 @@ const VoteErrorSchema = z.object({
   model: z.string(),
   latencyMs: z.number().nonnegative(),
   message: z.string(),
+  rateLimited: z.boolean().optional(),
 });
 const VoteResultSchema = z.union([VoteOkSchema, VoteErrorSchema]);
 

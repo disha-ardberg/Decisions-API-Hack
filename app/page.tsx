@@ -44,6 +44,9 @@ export default function Home() {
     votes: Object.values(fg.revised).flatMap((node) => node.vote ? [node.vote] : []),
     top_objections: fg.revisedAgg.top_objections,
   }) : null;
+  const failedOriginal = Object.values(fg.original).filter((node) => node.vote?.error).length;
+  const failedRevised = Object.values(fg.revised).filter((node) => node.vote?.error).length;
+  const gatewayStruggling = hasResults && !fg.recordedRun && (failedOriginal > 5 || revoteDone && failedRevised > 5);
 
   function loadRecorded() {
     try {
@@ -94,6 +97,13 @@ export default function Home() {
         )}
         {recordedError && <span role="alert" className="text-sm text-red-400">{recordedError}</span>}
       </div>
+
+      {gatewayStruggling && (
+        <div role="alert" className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-500/50 bg-amber-500/10 p-3 text-sm text-amber-200">
+          <span>Gateway is struggling. Load recorded run?</span>
+          <button type="button" onClick={loadRecorded} className="rounded-lg border border-amber-400/60 px-3 py-1 font-semibold hover:bg-amber-500/10">Load recorded run</button>
+        </div>
+      )}
 
       <PipelineStrip active={fg.active} completed={fg.completed} />
 

@@ -29,6 +29,7 @@ export type VoteOk = PersonaVote & {
   model: string;
   latencyMs: number;
   error?: false;
+  rateLimited?: boolean;
 };
 
 export type VoteError = {
@@ -37,6 +38,7 @@ export type VoteError = {
   model: string;
   latencyMs: number;
   message: string;
+  rateLimited?: boolean;
 };
 
 export type VoteResult = VoteOk | VoteError;

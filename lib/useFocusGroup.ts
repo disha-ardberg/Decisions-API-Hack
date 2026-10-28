@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { aggregate, type Aggregate } from "./aggregate";
 import { PERSONAS } from "./personas";
-import { runWithConcurrency } from "./pool";
+import { getMaxConcurrency, runWithConcurrency } from "./pool";
 import { RecordedRunSchema } from "./recorded";
 import { validateCopy, type Rewrite, type VoteResult } from "./schemas";
 
@@ -57,12 +57,13 @@ export function useFocusGroup() {
     const set = setters[key];
     set(emptyRound());
     await runWithConcurrency(
-      PERSONAS.map((p) => async () => {
+      PERSONAS.map((p) => async (control) => {
         set((r) => ({ ...r, [p.id]: { status: "loading" } }));
         const vote = await fetchVote(copy, p.id);
+        if (vote.rateLimited || (vote.error && /rate limit|429/i.test(vote.message))) control.rateLimited();
         set((r) => ({ ...r, [p.id]: { status: vote.error ? "error" : "done", vote } }));
       }),
-      5,
+      getMaxConcurrency(),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

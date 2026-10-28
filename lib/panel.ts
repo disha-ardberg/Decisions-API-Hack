@@ -1,14 +1,14 @@
 import { aggregate } from "./aggregate";
 import { PERSONAS, type Persona } from "./personas";
-import { runWithConcurrency } from "./pool";
+import { getMaxConcurrency, runWithConcurrency } from "./pool";
 import type { VoteResult } from "./schemas";
 import { evaluatePersona } from "./vote";
 
-/** Server-side: evaluate the supplied personas with concurrency 5. */
+/** Server-side: evaluate the supplied personas with configured concurrency. */
 export async function runPanel(copy: string, personas: Persona[] = PERSONAS, audience?: string): Promise<VoteResult[]> {
   const settled = await runWithConcurrency(
-    personas.map((p) => () => evaluatePersona(copy, p, { isRetry: true, audience })),
-    5,
+    personas.map((p) => (control) => evaluatePersona(copy, p, { isRetry: true, audience, onRateLimit: control.rateLimited })),
+    getMaxConcurrency(),
   );
   return settled.map((r, i) =>
     r.status === "fulfilled"
