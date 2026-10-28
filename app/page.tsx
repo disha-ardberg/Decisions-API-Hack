@@ -9,6 +9,8 @@ import PipelineStrip from "@/components/PipelineStrip";
 import ReactionMap from "@/components/ReactionMap";
 import RedlineView from "@/components/RedlineView";
 import ScoreGauge from "@/components/ScoreGauge";
+import VerdictCard from "@/components/VerdictCard";
+import { evaluate } from "@/lib/gate";
 import { useFocusGroup, type RoundKey } from "@/lib/useFocusGroup";
 
 export default function Home() {
@@ -25,6 +27,16 @@ export default function Home() {
   const roundCopy = shownKey === "original" ? fg.originalCopy : fg.revisedCopy;
   const canFix = hasResults && !fg.busy && !hasRevised && fg.originalAgg.top_objections.length > 0;
   const revoteDone = fg.completed >= 5;
+  const originalVerdict = hasResults ? evaluate({
+    score: fg.originalAgg.score,
+    votes: Object.values(fg.original).flatMap((node) => node.vote ? [node.vote] : []),
+    top_objections: fg.originalAgg.top_objections,
+  }) : null;
+  const revisedVerdict = revoteDone ? evaluate({
+    score: fg.revisedAgg.score,
+    votes: Object.values(fg.revised).flatMap((node) => node.vote ? [node.vote] : []),
+    top_objections: fg.revisedAgg.top_objections,
+  }) : null;
 
   return (
     <main className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-6">
@@ -65,13 +77,19 @@ export default function Home() {
             </section>
 
             <section className="grid gap-4 md:grid-cols-2">
-              {revoteDone || fg.active === 4 || hasRevised ? (
+              {revoteDone ? (
                 <>
                   <ScoreGauge title="Original score" agg={fg.originalAgg} />
+                  {originalVerdict && <VerdictCard title="Original Launch Gate" result={originalVerdict} />}
                   <ScoreGauge title="Revised score" agg={fg.revisedAgg} compareTo={fg.originalAgg.score} />
+                  {revisedVerdict && <VerdictCard title="Revised Launch Gate" result={revisedVerdict} />}
                 </>
               ) : (
-                <ScoreGauge title="Simulated conversion" agg={fg.originalAgg} />
+                <>
+                  <ScoreGauge title="Simulated conversion" agg={fg.originalAgg} />
+                  {originalVerdict && <VerdictCard result={originalVerdict} />}
+                  {(fg.active === 4 || hasRevised) && <ScoreGauge title="Revised score" agg={fg.revisedAgg} compareTo={fg.originalAgg.score} />}
+                </>
               )}
               <ObjectionList objections={(shownKey === "original" ? fg.originalAgg : fg.revisedAgg).top_objections} />
               {hasResults && !hasRevised && (
