@@ -20,6 +20,7 @@ function Nav({ onNavigate }: { onNavigate?: () => void }) {
     { href: "/personas", label: "Personas", icon: "◉", active: path.startsWith("/personas") },
     { href: currentId ? `/insights/${currentId}` : "#", label: "Insights", icon: "◔", active: path.startsWith("/insights"), disabled: !currentId },
     { href: currentId ? `/rewrite/${currentId}` : "#", label: "Rewrite Studio", icon: "✎", active: path.startsWith("/rewrite"), disabled: !currentId },
+    { href: "/agent", label: "Agent Chatbot", icon: "✦", active: path.startsWith("/agent") },
     { href: "/api-docs", label: "API Docs", icon: "</>", active: path.startsWith("/api-docs") },
   ];
 

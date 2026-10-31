@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { PERSONAS } from "../lib/personas";
 import { getMaxConcurrency, runWithConcurrency } from "../lib/pool";
 import { evaluatePersona, isRetryableModelError } from "../lib/vote";
+import { describeError } from "../lib/client";
 
 process.env.MOCK_MODE = "false";
 process.env.MODEL_A = "test-A";
@@ -30,6 +31,55 @@ async function main() {
   assert.equal(calls, 3);
   assert.equal(rateLimits, 2);
   assert.deepEqual(waits, [500, 1500]);
+
+  let quotaCalls = 0;
+  const quota = Object.assign(error(429), { code: "credit_balance_exhausted", requestID: "req_test_429" });
+  const logged: string[] = [];
+  const originalConsoleError = console.error;
+  console.error = (...args: unknown[]) => { logged.push(args.map(String).join(" ")); };
+  let afterQuota: Awaited<ReturnType<typeof evaluatePersona>>;
+  try {
+    afterQuota = await evaluatePersona(copy, PERSONAS[0], {
+      transport: async () => { quotaCalls++; throw quota; },
+      wait: async () => { throw new Error("Quota errors must not be retried"); },
+    });
+  } finally {
+    console.error = originalConsoleError;
+  }
+  assert.equal(afterQuota.error, true);
+  assert.equal(quotaCalls, 1);
+  assert.equal(logged.length, 1);
+  const log = JSON.parse(logged[0]);
+  assert.equal(log.event, "persona_vote_failed");
+  assert.equal(log.status, 429);
+  assert.equal(log.code, "credit_balance_exhausted");
+  assert.equal(log.providerRequestId, "req_test_429");
+  assert.equal(logged[0].includes(copy), false);
+  assert.equal(isRetryableModelError(quota), false);
+  assert.match(describeError(quota), /credits are exhausted/);
+  const legacyQuota = Object.assign(error(429), { type: "insufficient_quota" });
+  assert.equal(isRetryableModelError(legacyQuota), false);
+  assert.match(describeError(legacyQuota), /quota is exhausted/);
+
+  const hintedWaits: number[] = [];
+  let hintedCalls = 0;
+  const hinted = Object.assign(error(429), { headers: new Headers({ "Retry-After": "3" }) });
+  const afterHint = await evaluatePersona(copy, PERSONAS[0], {
+    transport: async () => { if (++hintedCalls === 1) throw hinted; return validVote; },
+    wait: async (ms) => { hintedWaits.push(ms); }, jitter: () => 0,
+  });
+  assert.equal(afterHint.error, undefined);
+  assert.deepEqual(hintedWaits, [3000]);
+
+  let longHintCalls = 0;
+  const longHint = Object.assign(error(429), { headers: new Headers({ "Retry-After": "60" }) });
+  const afterLongHint = await evaluatePersona(copy, PERSONAS[0], {
+    transport: async () => { longHintCalls++; throw longHint; },
+    wait: async () => { throw new Error("Long Retry-After must not be ignored"); },
+  });
+  assert.equal(afterLongHint.error, true);
+  assert.equal(longHintCalls, 1);
+  assert.match(afterLongHint.message, /Retry after 60 seconds/);
 
   const models: string[] = [];
   const after500 = await evaluatePersona(copy, PERSONAS[0], {
@@ -72,7 +122,7 @@ async function main() {
   }), 4);
   assert.equal(limits[0], 3);
   assert.deepEqual(settled.map((item) => item.status === "fulfilled" ? item.value : -1), [0, 1, 2, 3, 4, 5, 6, 7]);
-  console.log("resilience tests passed: 429 backoff, 500/timeout fallback, 400/401/403 stop, network classification, pool limit reduction");
+  console.log("resilience tests passed: 429 backoff and Retry-After, quota stops, 500/timeout fallback, 400/401/403 stop, pool limit reduction");
 }
 
 main().catch((err) => { console.error(err); process.exitCode = 1; });

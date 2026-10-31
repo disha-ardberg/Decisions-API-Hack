@@ -56,6 +56,8 @@ export default function EvaluationPage() {
           ? evaluate({ score: agg.score, votes, top_objections: agg.top_objections }) : null;
         const failedOriginal = roundVotes(e.original).filter((vote) => vote.error).length;
         const failedRevised = e.completed >= 5 ? roundVotes(e.revised).filter((vote) => vote.error).length : 0;
+        const firstFailure = [...roundVotes(e.original), ...roundVotes(e.revised)].find((vote) => vote.error);
+        const failureMessage = firstFailure?.error ? firstFailure.message : null;
         const canSave = ready && !e.recordedRun && e.active === null && roundVotes(e.original).length === 10 &&
           (e.completed < 5 || roundVotes(e.revised).length === 10);
 
@@ -80,7 +82,7 @@ export default function EvaluationPage() {
               {e.recordedRun && <span className="inline-flex rounded-full border border-sky-500/40 px-3 py-1 text-xs font-semibold text-sky-300">Recorded run · {e.recordedRun.source}</span>}
               {!e.recordedRun && ready && (failedOriginal > 5 || failedRevised > 5) && (
                 <div role="alert" className="flex flex-wrap items-center gap-3 rounded-xl border border-amber-500/50 bg-amber-500/10 p-3 text-sm text-amber-200">
-                  <span>Gateway is struggling. Load recorded run?</span>
+                  <span>Most evaluations failed. {failureMessage ?? "Check the AI provider configuration."} You can explore a recorded run while live evaluations are unavailable.</span>
                   <LoadRecordedButton className={btnGhost} />
                 </div>
               )}

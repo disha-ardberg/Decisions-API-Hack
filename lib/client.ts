@@ -61,10 +61,22 @@ export async function chatJson(model: string, system: string, user: string): Pro
 
 export function describeError(err: unknown): string {
   if (err instanceof ConfigError) return err.message;
-  const status = (err as { status?: number }).status;
+  const apiError = err as { status?: number; code?: string | null; type?: string } | null;
+  const status = apiError?.status;
   if (status === 401 || status === 403) return "Gateway authentication failed (check AI_API_KEY).";
   if (status === 404) return "Gateway or model not found (check AI_BASE_URL and MODEL_* values).";
-  if (status === 429) return "Gateway rate limit hit.";
+  if (status === 429) {
+    switch (apiError?.code) {
+      case "credit_balance_exhausted": return "AI provider credits are exhausted. Add API credits to resume live evaluations.";
+      case "organization_usage_limit_exceeded": return "AI provider organization usage limit reached. Review the account's usage limit.";
+      case "organization_spend_limit_exceeded": return "AI provider organization spend limit reached. Review the account's spend limit.";
+      case "project_spend_limit_exceeded": return "AI provider project spend limit reached. Review the project's spend limit.";
+      case "insufficient_quota": return "AI provider quota is exhausted. Check API credits and usage limits.";
+      default: return apiError?.type === "insufficient_quota"
+        ? "AI provider quota is exhausted. Check API credits and usage limits."
+        : "Gateway rate limit hit. Check the provider's rate limits and Retry-After guidance.";
+    }
+  }
   if (err instanceof Error && /timed? ?out|timeout/i.test(err.message)) return "Gateway request timed out.";
   return err instanceof Error ? err.message : "Unknown error";
 }

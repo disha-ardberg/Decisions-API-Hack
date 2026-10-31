@@ -36,6 +36,7 @@ export default function Overview() {
             <Link href="/evaluate" className={btnPrimary}>▶ Start new evaluation</Link>
             <LoadRecordedButton className={btnGhost} />
             <Link href="/api-docs" className={btnGhost}>View API docs</Link>
+            <Link href="/agent" className={btnGhost}>Chat with agent</Link>
           </div>
         </div>
         <div className="rounded-2xl border border-line bg-card p-6">
